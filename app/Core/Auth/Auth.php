@@ -8,10 +8,17 @@ use App\Core\Session\Session;
 
 class Auth
 {
-    public static function login($user)
+    public function __construct(private Session $session,private Database $database)
     {
-        $container = Container::getInstance();
-        $session = $container->get(Session::class);
-        $session->set('user_id', $user['id']);
+    }
+
+    public function login($user)
+    {
+        $this->session->set('user_id', $user['id']);
+    }
+
+    public function logout()
+    {
+        $this->session->unset('user_id');
     }
 }

@@ -1,5 +1,8 @@
-<?php /** @var \App\Core\View\View $view */
-$view->component('header');?>
+<?php
+/** @var \App\Core\View\View $view */
+/** @var array $errors */
+$view->component('header');
+$view->component('nav'); ?>
     <form class="max-w-sm mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg space-y-6" action="/login" method="POST">
         <h2 class="text-2xl font-bold text-center text-gray-800">Log In</h2>
 
@@ -13,7 +16,9 @@ $view->component('header');?>
                     placeholder="you@example.com"
                     required
             />
-            <?php $view->error('email');?>
+            <?php if (isset($errors['email'])): ?>
+                <p class="text-red-500 text-xs font-semibold"><?= $errors['email'] ?></p>
+            <?php endif; ?>
         </div>
 
         <div>
@@ -26,17 +31,22 @@ $view->component('header');?>
                     placeholder="••••••••"
                     required
             />
-            <?php $view->error('password');?>
+            <?php if (isset($errors['password'])): ?>
+                <p class="text-red-500 text-xs font-semibold"><?= $errors['password'] ?></p>
+            <?php endif; ?>
         </div>
 
         <button
                 type="submit"
                 class="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition"
         >
-        Log In
+            Log In
         </button>
 
+        <p class="text-sm text-center text-gray-600">
 
+            <a href="/register" class="text-blue-600 hover:underline">Create an account</a>
+        </p>
     </form>
 
 <?php $view->component('footer'); ?>

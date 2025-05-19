@@ -1,16 +1,18 @@
 <?php
 /** @var \App\Core\View\View $view */
 /** @var array $errors */
+/** @var array $post */
 /** @var array $data */
 $view->component('header');
 $view->component('nav'); ?>
 
 <main class="flex-grow container mx-auto px-4 py-6">
     <form
-            action="/posts"
+            action="/posts/<?=$post['id']?>"
             method="POST"
             class="max-w-2xl w-full mx-auto p-6 bg-white rounded-2xl shadow-md space-y-6"
     >
+        <input type="hidden" name="_method" value="PATCH">
         <div>
             <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
             <input
@@ -19,7 +21,7 @@ $view->component('nav'); ?>
                     name="title"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Enter title"
-                    value="<?=$data['title']?>"
+                    value="<?=$data['title'] ?? $post['title']?>"
             />
             <p class="text-red-500 text-xs font-semibold"><?=$errors['title']?></p>
         </div>
@@ -33,7 +35,7 @@ $view->component('nav'); ?>
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Enter body content"
 
-            ><?=$data['title'] ?? ''?></textarea>
+            ><?=$data['body'] ?? $post['body']?></textarea>
             <p class="text-red-500 text-xs font-semibold"><?=$errors['body']?></p>
         </div>
 

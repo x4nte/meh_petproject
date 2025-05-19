@@ -8,20 +8,17 @@ use Closure;
 
 class App
 {
-    private Container $container;
-
-    public function __construct()
+    public function __construct(private Router $router)
     {
-        $this->container = Container::getInstance();
     }
 
-    public function register($key, Closure $value) : void
+    public function bind($key, Closure $value) : void
     {
-        $this->container->set($key, $value);
+        Container::getInstance()->bind($key, $value);
     }
 
     public function run()
     {
-        $this->container->get(Router::class)->dispatch();
+        $this->router->dispatch();
     }
 }

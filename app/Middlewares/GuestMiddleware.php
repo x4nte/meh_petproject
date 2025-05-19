@@ -6,13 +6,12 @@ use App\Core\Http\Request;
 use App\Core\Middleware\Middleware;
 use Closure;
 
-class AuthMiddleware extends Middleware
+class GuestMiddleware extends Middleware
 {
     public function handle(Request $request)
     {
-        $userId = $request->session->get("user_id");
-        if(!$userId) {
-            $request->redirect("/login");
+        if($request->session->has("user_id")) {
+            $request->redirect("/");
         }
     }
 }

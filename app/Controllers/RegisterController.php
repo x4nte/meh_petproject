@@ -11,20 +11,21 @@ class RegisterController extends Controller
 {
     public function create(): void
     {
-        Container::getInstance()->get(Database::class);
         $this->view('auth/register');
     }
 
     public function store(): void
     {
-        $validation = $this->request()->validate(['email' => ['required','email' ], 'password' => ['required', 'min:7', 'max:20']]);
+        $validation = $this->request()->validate(['email' => ['unique:users','required', 'email', 'unique:users'], 'password' => ['required', 'min:7', 'max:20']]);
         if (!$validation) {
             $this->validationError('/register');
         }
         $db = Container::getInstance()->get(Database::class);
         $data = $this->request()->validated();
-        $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
-        $db->insert('users',$data);
+        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+        $db->insert('users', $data);
         $this->redirect('/login');
     }
+
+
 }

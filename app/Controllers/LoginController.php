@@ -10,6 +10,14 @@ use App\Core\Http\Request;
 
 class LoginController extends Controller
 {
+    private Auth $auth;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->auth = Container::getInstance()->get(Auth::class);
+    }
+
     public function create(): void
     {
         $this->view('auth/login');
@@ -17,7 +25,7 @@ class LoginController extends Controller
 
     public function store(): void
     {
-        $validation = $this->request()->validate(['email' => ['required','email' ], 'password' => ['required', 'min:7', 'max:20']]);
+        $validation = $this->request()->validate(['email' => ['required', 'email'], 'password' => ['required', 'min:7', 'max:20']]);
         if (!$validation) {
             $this->validationError('/login');
         }
@@ -26,13 +34,20 @@ class LoginController extends Controller
 
         $db = Container::getInstance()->get(Database::class);
         $result = $db->find('users', ['email' => $data['email']]);
-        if(!$result){
+        if (!$result) {
             $this->validationError('/login', ['email' => 'User does not exist']);
         }
-
-        if(password_verify($data['password'], $result['password'])){
-            Auth::login($result);
+        if (password_verify($data['password'], $result['password'])) {
+            $this->auth->login($result);
             $this->redirect('/');
+            return;
         }
+        $this->validationError('/login', ['email' => 'Invalid credentials']);
+    }
+
+    public function destroy()
+    {
+        $this->auth->logout();
+        $this->redirect('/login');
     }
 }

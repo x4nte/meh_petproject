@@ -1,5 +1,8 @@
-<?php /** @var \App\Core\View\View $view */
-$view->component('header');?>
+<?php
+/** @var \App\Core\View\View $view */
+/** @var array $errors */
+$view->component('header');
+$view->component('nav'); ?>
     <form class="max-w-sm mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg space-y-6" action="/register" method="POST">
         <h2 class="text-2xl font-bold text-center text-gray-800">Sign In</h2>
 
@@ -13,6 +16,7 @@ $view->component('header');?>
                     placeholder="you@example.com"
                     required
             />
+            <p class="text-red-500 text-xs font-semibold"><?=$errors['email']?></p>
         </div>
 
         <div>
@@ -25,6 +29,7 @@ $view->component('header');?>
                     placeholder="••••••••"
                     required
             />
+            <p class="text-red-500 text-xs font-semibold"><?=$errors['password']?></p>
         </div>
 
         <button

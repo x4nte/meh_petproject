@@ -9,8 +9,6 @@ const APP_PATH = __DIR__ . '/../../';
 
 require_once APP_PATH . 'vendor/autoload.php';
 
-$app = new App();
-
 require APP_PATH . 'bootstrap/bootstrap.php';
 
 Container::getInstance()->get(Migrator::class)->migrate();

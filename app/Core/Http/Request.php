@@ -8,20 +8,16 @@ use App\Core\Validator\Validator;
 
 class Request
 {
-    private Validator $validator;
-    public Session $session;
-
     public readonly array $server;
     public readonly array $get;
-    public readonly array $post;
+    public array $post;
     public readonly array $files;
     public readonly array $cookie;
+    public readonly string $method;
 
-    public function __construct(Validator $validator, Session $session)
+    public function __construct(private Validator $validator, public Session $session)
     {
         $this->createFromGlobals();
-        $this->validator = $validator;
-        $this->session = $session;
     }
 
     public function createFromGlobals()
@@ -31,16 +27,13 @@ class Request
         $this->post = $_POST;
         $this->files = $_FILES;
         $this->cookie = $_COOKIE;
+        $this->method = $this->post['_method'] ?? strtoupper($this->server['REQUEST_METHOD']);
+        unset($this->post['_method']);
     }
 
     public function uri(): string
     {
         return parse_url($this->server['REQUEST_URI'], PHP_URL_PATH);
-    }
-
-    public function method(): string
-    {
-        return strtoupper($this->server['REQUEST_METHOD']);
     }
 
     public function input(string $key, $default = null)
@@ -52,6 +45,7 @@ class Request
     {
         return $this->validator->validate($this->post, $rules);
     }
+
 
     public function validated(): array
     {

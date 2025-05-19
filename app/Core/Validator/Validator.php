@@ -2,10 +2,16 @@
 
 namespace App\Core\Validator;
 
+use App\Core\Database\Database;
+
 class Validator
 {
     private array $errors = [];
     private array $data = [];
+
+    public function __construct(private Database $db)
+    {
+    }
 
     public function validate(array $data, array $rules): bool
     {
@@ -15,13 +21,13 @@ class Validator
             $value = $this->data[$key] ?? null;
             if (is_array($rule)) {
                 foreach ($rule as $ruleValue) {
-                    $error = $this->validateRule($value, $ruleValue);
+                    $error = $this->validateRule($value, $ruleValue, $key);
                     if (!empty($error)) {
                         $this->errors[$key] = $error;
                     }
                 }
             } else {
-                $error = $this->validateRule($value, $rule);
+                $error = $this->validateRule($value, $rule, $key);
                 if (!empty($error)) {
                     $this->errors[$key] = $error;
                 }
@@ -30,7 +36,7 @@ class Validator
         return empty($this->errors);
     }
 
-    public function validated() : array
+    public function validated(): array
     {
         return $this->data;
     }
@@ -40,7 +46,7 @@ class Validator
         return $this->errors;
     }
 
-    public function validateRule($value, $rule): string|null
+    public function validateRule($value, $rule, $key): string|null
     {
         $rule = explode(':', $rule);
         $ruleName = $rule[0];
@@ -60,6 +66,12 @@ class Validator
             case 'min':
                 if (strlen($value) < intval($ruleValue)) {
                     return 'Field is must be at least ' . $ruleValue . ' characters.';
+                }
+                break;
+            case 'unique':
+                $result = $this->db->find($ruleValue, [$key => $value]);
+                if($result){
+                    return "Field $key already exists. ";
                 }
                 break;
             case 'max':
